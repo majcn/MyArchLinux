@@ -46,6 +46,7 @@ sed -i 's/APPEND root=\/dev\/sda3/APPEND root=\/dev\/sda2/' /boot/syslinux/sysli
 pacman -S --noconfirm alsa-utils xorg-server xorg-xinit xorg-server-utils mesa xf86-video-intel xf86-input-synaptics ttf-dejavu
 
 useradd -m -g users -G wheel,storage,power -s /bin/bash majcn
+chfn majcn
 
 echo "enter root password:"
 passwd root

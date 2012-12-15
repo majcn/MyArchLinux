@@ -1,13 +1,13 @@
 ### ON LIVE ###
 #gdisk /dev/sda
-#mkfs.ext2 -L boot /dev/sda1
-#mkfs.ext4 -L system /dev/sda2
-#mkfs.ext4 -L home /dev/sda3
-#mount /dev/sda2 /mnt
+#mkfs.ext2 -L boot /dev/sda2
+#mkfs.ext4 -L system /dev/sda3
+#mkfs.ext4 -L home /dev/sda4
+#mount /dev/sda3 /mnt
 #mkdir /mnt/home
 #mkdir /mnt/boot
-#mount /dev/sda3 /mnt/home
-#mount /dev/sda1 /mnt/boot
+#mount /dev/sda4 /mnt/home
+#mount /dev/sda2 /mnt/boot
 #pacstrap -i /mnt base base-devel
 #genfstab -U -p /mnt >> /mnt/etc/fstab
 #arch-chroot /mnt
@@ -29,7 +29,7 @@ hwclock --systohc --utc
 echo majcn-laptop > /etc/hostname
 
 pacman -Syy
-pacman -S --noconfirm bash-completion vim sudo
+pacman -S --noconfirm bash-completion vim sudo git
 sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 pacman -S --noconfirm ifplugd wireless_tools wpa_supplicant wpa_actiond dialog
@@ -38,9 +38,10 @@ systemctl enable net-auto-wireless.service
 
 mkinitcpio -p linux
 
-pacman -S --noconfirm gptfdisk syslinux
-syslinux-install_update -i -a -m
-sed -i 's/APPEND root=\/dev\/sda3/APPEND root=\/dev\/sda2/' /boot/syslinux/syslinux.cfg
+pacman -S --noconfirm grub-bios
+grub-install --recheck /dev/sda
+cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
+grub-mkconfig -o /boot/grub/grub.cfg
 
 #extra
 pacman -S --noconfirm alsa-utils xorg-server xorg-xinit xorg-server-utils mesa xf86-video-intel xf86-input-synaptics ttf-dejavu

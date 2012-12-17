@@ -49,6 +49,24 @@ grub-mkconfig -o /boot/grub/grub.cfg
 #extra
 pacman -S --noconfirm alsa-utils xorg-server xorg-xinit xorg-server-utils mesa xf86-video-intel xf86-input-synaptics ttf-dejavu
 
+#laptop-mode
+pacman -S --noconfirm laptop-mode-tools acpid bluez hdparm sdparm ethtool wireless_tools xorg-xset
+rm -r /etc/laptop-mode/conf.d/board-specific
+ln -s '/usr/lib/systemd/system/laptop-mode.service' '/etc/systemd/system/multi-user.target.wants/laptop-mode.service'
+
+#gnome + xmonad
+pacman -S --noconfirm gnome gnome-extra xmonad xmonad-contrib
+ln -s '/usr/lib/systemd/system/gdm.service' '/etc/systemd/system/display-manager.service'
+
+#desktop extra
+pacman -S --noconfirm firefox chromium flashplugin meld
+
+#preload
+pacman -S --noconfirm preload
+ln -s '/usr/lib/systemd/system/preload.service' '/etc/systemd/system/multi-user.target.wants/preload.service'
+
+#TODO: aur
+
 useradd -m -g users -G wheel,storage,power -s /bin/bash majcn
 chfn majcn
 

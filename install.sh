@@ -12,6 +12,9 @@
 #genfstab -U -p /mnt >> /mnt/etc/fstab
 #arch-chroot /mnt
 
+cp /etc/pacman.d/mirrorlist{,.backup}
+rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+
 sed -i 's/#sl_SI/sl_SI/' /etc/locale.gen
 sed -i 's/#en_US/en_US/' /etc/locale.gen
 locale-gen

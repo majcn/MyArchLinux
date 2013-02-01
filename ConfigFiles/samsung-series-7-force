@@ -1,0 +1,12 @@
+0xCE # FN+F1 System Settings
+0x89 # FN+F2 Brightness down
+0x88 # FN+F3 Brightness up
+0x82 # FN+F4 Switch video mode
+0xF9 # FN+F5 Turn touchpad off
+0xA0 # FN+F6 Mute
+0xAE # FN+F7 Volume down
+0xB0 # FN+F8 Volume up
+0x97 # FN+F9 Keyboard backlight down
+0x96 # FN+F10 Keyboard backlight up
+0xB3 # FN+F11 Silentmode
+0xD5 # FN+F12 WiFi

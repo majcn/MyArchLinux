@@ -1,0 +1,5 @@
+samsung-series-7	/usr/lib/udev/keymaps/samsung-series-7
+samsung-series-7-force	/usr/lib/udev/keymaps/force-release/samsung-series-7
+20-intel.conf		/etc/X11/xorg.conf.d/20-intel.conf
+kb_down.sh		/usr/bin/kb_down.sh
+kb_up.sh		/usr/bin/kb_up.sh

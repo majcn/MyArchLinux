@@ -1,36 +1,25 @@
 #extra
 pacman -S --noconfirm alsa-utils xorg-server xorg-xinit xorg-server-utils xf86-input-synaptics ttf-dejavu mlocate
 
-#gnome + xmonad
-pacman -S --noconfirm gnome gnome-extra xmonad xmonad-contrib
+#gnome
+pacman -S --noconfirm gnome
+#pacman -S --noconfirm gnome-extra
 systemctl enable gdm.service
+
+#xmonad
+#pacman -S --noconfirm xmonad xmonad-contrib
 
 #desktop extra
 pacman -S --noconfirm firefox chromium flashplugin meld
 
-#preload
-pacman -S --noconfirm preload
-systemctl enable preload.service
-
-#AURget
-cd /tmp
-curl https://aur.archlinux.org/packages/au/aurget/aurget.tar.gz | tar xvz
-cd aurget
-makepkg -i --noconfirm
-
 #video
-pacman -S --noconfirm xf86-video-intel xf86-video-nouveau nouveau-dri mesa
-aurget -S bumblebee bbswitch --deps --rebuild --noedit --discard --noconfirm
+pacman -S --noconfirm bumblebee bbswitch primus intel-dri xf86-video-intel nvidia
 gpasswd -a majcn bumblebee
 systemctl enable bumblebeed.service
 
 #samsung-tools
-aurget -S samsung-tools --deps --rebuild --noedit --discard --noconfirm
-systemctl enable samsung-tools.service
-
-#keyboard backlight
-sed -i '$ a %wheel ALL=(ALL) NOPASSWD: /usr/bin/kb_down.sh' /etc/sudoers
-sed -i '$ a %wheel ALL=(ALL) NOPASSWD: /usr/bin/kb_up.sh' /etc/sudoers
+#aurget -S samsung-tools --deps --rebuild --noedit --discard --noconfirm
+#systemctl enable samsung-tools.service
 
 #TODO
 #set settings in samsung-tools

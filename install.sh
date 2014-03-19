@@ -35,21 +35,17 @@ pacman -Syy
 pacman -S --noconfirm bash-completion vim sudo git
 sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
-pacman -S --noconfirm ifplugd wireless_tools wpa_supplicant wpa_actiond dialog
-systemctl enable net-auto-wireless.service
-#systemctl enable net-auto-wired.service
+pacman -S --noconfirm iw wpa_supplicant
 
 mkinitcpio -p linux
 
-pacman -S --noconfirm grub-bios
+pacman -S --noconfirm grub os-prober
 grub-install --recheck /dev/sda
-cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
 grub-mkconfig -o /boot/grub/grub.cfg
 
-useradd -m -g users -G wheel,storage,power -s /bin/bash majcn
+useradd -m -G wheel -s /bin/bash majcn
+
 chfn majcn
 
-echo "enter root password:"
-passwd root
 echo "enter majcn password:"
 passwd majcn

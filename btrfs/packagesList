@@ -1,0 +1,39 @@
+# Wireless
+dialog
+iw
+wpa_supplicant
+
+# Nvidia optimus
+bumblebee
+bbswitch
+primus
+intel-dri
+xf86-video-intel
+nvidia
+
+# Sound
+alsa-utils
+
+# Xorg
+xorg-server
+xorg-server-utils
+xorg-xinit
+
+# Touchpad
+xf86-input-synaptics
+
+# Fonts
+ttf-dejavu
+
+# Desktop environment (GNOME)
+gnome
+firefox
+chromium
+flashplugin
+
+# Others
+bash-completion
+vim
+git
+meld
+mlocate

@@ -16,8 +16,8 @@ BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o export | grep ^UUID= | cut -c6-`
 mkdir /mnt/btrfs-root
 mount -o $BTRFS_MOUNTS /dev/sda1 /mnt/btrfs-root
 
-mkdir -p /mnt/btrfs/__snapshot
-mkdir -p /mnt/btrfs/__current
+mkdir -p /mnt/btrfs-root/__snapshot
+mkdir -p /mnt/btrfs-root/__current
 btrfs subvolume create /mnt/btrfs-root/__current/ROOT
 btrfs subvolume create /mnt/btrfs-root/__current/home
 btrfs subvolume create /mnt/btrfs-root/__current/opt

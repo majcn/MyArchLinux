@@ -40,26 +40,26 @@ pacstrap /mnt/btrfs-current base base-devel btrfs-progs
 
 cp $DIR/packagesList /mnt/btrfs-current/tmp
 cp $DIR/fstab /mnt/btrfs-current/etc/fstab
-sed -i 's/{{BTRFS_DEVICE}}/$BTRFS_DEVICE/' /mnt/btrfs-current/etc/fstab
-sed -i 's/{{BTRFS_LABEL}}/$BTRFS_LABEL/' /mnt/btrfs-current/etc/fstab
-sed -i 's/{{BTRFS_DEVICE_UUID}}/$BTRFS_DEVICE_UUID/' /mnt/btrfs-current/etc/fstab
-sed -i 's/{{BTRFS_MOUNTS}}/$BTRFS_MOUNTS/' /mnt/btrfs-current/etc/fstab
+sed -i "s/{{BTRFS_DEVICE}}/$BTRFS_DEVICE/" /mnt/btrfs-current/etc/fstab
+sed -i "s/{{BTRFS_LABEL}}/$BTRFS_LABEL/" /mnt/btrfs-current/etc/fstab
+sed -i "s/{{BTRFS_DEVICE_UUID}}/$BTRFS_DEVICE_UUID/" /mnt/btrfs-current/etc/fstab
+sed -i "s/{{BTRFS_MOUNTS}}/$BTRFS_MOUNTS/" /mnt/btrfs-current/etc/fstab
 
 arch-chroot /mnt/btrfs-current <<EOF
  
 cp /etc/pacman.d/mirrorlist{,.backup}
 rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 
-sed -i 's/#sl_SI/sl_SI/' /etc/locale.gen
-sed -i 's/#en_US/en_US/' /etc/locale.gen
+sed -i "s/#sl_SI/sl_SI/" /etc/locale.gen
+sed -i "s/#en_US/en_US/" /etc/locale.gen
 locale-gen
 
 echo LANG=en_US.UTF-8 > /etc/locale.conf
 export LANG=en_US.UTF-8
 
 echo KEYMAP=us > /etc/vconsole.conf
-sed -i '$ a FONT=' /etc/vconsole.conf
-sed -i '$ a FONT_MAP=' /etc/vconsole.conf
+sed -i "$ a FONT=" /etc/vconsole.conf
+sed -i "$ a FONT_MAP=" /etc/vconsole.conf
 
 ln -s /usr/share/zoneinfo/$ZONEINFO /etc/localtime
 hwclock --systohc --utc
@@ -68,9 +68,9 @@ echo $HOSTNAME > /etc/hostname
 
 pacman -Syy
 pacman -S --noconfirm sudo
-sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
 
-grep -v '^#' /tmp/packagesList | sudo pacman -S --noconfirm -
+grep -v "^#" /tmp/packagesList | sudo pacman -S --noconfirm -
 
 mkinitcpio -p linux
 
@@ -80,7 +80,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 useradd -m -G wheel -s /bin/bash $USERNAME
 
-chfn --full-name $FULL_NAME $USERNAME
+chfn --full-name "$FULL_NAME" $USERNAME
 
 echo -e "pass\npass" | passwd majcn
 

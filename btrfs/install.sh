@@ -36,14 +36,20 @@ mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var $BTRFS_DEVICE /m
 mkdir -p /mnt/btrfs-current/var/lib
 mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 
-pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo grub
+pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo grub os-prober
 
-cp $DIR/packagesList /mnt/btrfs-current/packagesList
 cp $DIR/fstab /mnt/btrfs-current/etc/fstab
+chmod 644 /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_DEVICE}}|$BTRFS_DEVICE|" /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_DEVICE_UUID}}|$BTRFS_DEVICE_UUID|" /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-current/etc/fstab
+
+# TODO: include grub file instead of generating one
+# cp $DIR/grub.cfg /mnt/btrfs-current/boot/grub/grub.cfg
+# chmod 600 /mnt/btrfs-current/boot/grub/grub.cfg
+
+cp $DIR/packagesList /mnt/btrfs-current/packagesList
 
 arch-chroot /mnt/btrfs-current <<EOF
  
@@ -61,16 +67,16 @@ echo KEYMAP=us > /etc/vconsole.conf
 sed -i "$ a FONT=" /etc/vconsole.conf
 sed -i "$ a FONT_MAP=" /etc/vconsole.conf
 
+sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
+
 ln -s /usr/share/zoneinfo/$ZONEINFO /etc/localtime
 hwclock --systohc --utc
 
 echo $HOSTNAME > /etc/hostname
 
-sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
+grep -v "^#" /packagesList | pacman -Sy --noconfirm -
 
-grep -v "^#" /packagesList | sudo pacman -Sy --noconfirm -
-rm /packagesList
-
+sed -i "/^HOOKS=/s/fsck/btrfs/" /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 grub-install --recheck $GRUB_DEVICE
@@ -85,6 +91,8 @@ echo -e "pass\npass" | passwd majcn
 exit
 
 EOF
+
+rm /mnt/btrfs-current/packagesList
 
 umount /mnt/btrfs-current/home
 umount /mnt/btrfs-current/opt

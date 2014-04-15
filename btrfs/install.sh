@@ -16,7 +16,7 @@ mkfs.btrfs -L "$BTRFS_LABEL" $BTRFS_DEVICE -f
 BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o export | grep ^UUID= | cut -c6-`
 
 mkdir /mnt/btrfs-root
-mount -o $BTRFS_MOUNTS /dev/sda1 /mnt/btrfs-root
+mount -o $BTRFS_MOUNTS $BTRFS_DEVICE /mnt/btrfs-root
 
 mkdir -p /mnt/btrfs-root/__snapshot
 mkdir -p /mnt/btrfs-root/__current
@@ -26,13 +26,13 @@ btrfs subvolume create /mnt/btrfs-root/__current/opt
 btrfs subvolume create /mnt/btrfs-root/__current/var
 
 mkdir -p /mnt/btrfs-current
-mount -o $BTRFS_MOUNTS,subvol=__current/ROOT /dev/sda1 /mnt/btrfs-current
+mount -o $BTRFS_MOUNTS,subvol=__current/ROOT $BTRFS_DEVICE /mnt/btrfs-current
 mkdir -p /mnt/btrfs-current/home
 mkdir -p /mnt/btrfs-current/opt
 mkdir -p /mnt/btrfs-current/var/lib
-mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__current/home /dev/sda1 /mnt/btrfs-current/home
-mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__current/opt /dev/sda1 /mnt/btrfs-current/opt
-mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var /dev/sda1 /mnt/btrfs-current/var
+mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__current/home $BTRFS_DEVICE /mnt/btrfs-current/home
+mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__current/opt $BTRFS_DEVICE /mnt/btrfs-current/opt
+mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var $BTRFS_DEVICE /mnt/btrfs-current/var
 mkdir -p /mnt/btrfs-current/var/lib
 mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 

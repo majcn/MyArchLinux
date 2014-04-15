@@ -1,3 +1,5 @@
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
 HOSTNAME="majcn-laptop"
 USERNAME="majcn"
 FULL_NAME="Gregor Majcen"
@@ -35,7 +37,14 @@ mkdir -p /mnt/btrfs-current/var/lib
 mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 
 pacstrap /mnt/btrfs-current base base-devel btrfs-progs
-genfstab -U -p /mnt/btrfs-current >> /mnt/btrfs-current/etc/fstab
+
+cp $DIR/packagesList /mnt/btrfs-current/tmp
+cp $DIR/fstab /mnt/btrfs-current/etc/fstab
+sed -i 's/{{BTRFS_DEVICE}}/$BTRFS_DEVICE/' /mnt/btrfs-current/etc/fstab
+sed -i 's/{{BTRFS_LABEL}}/$BTRFS_LABEL/' /mnt/btrfs-current/etc/fstab
+sed -i 's/{{BTRFS_DEVICE_UUID}}/$BTRFS_DEVICE_UUID/' /mnt/btrfs-current/etc/fstab
+sed -i 's/{{BTRFS_MOUNTS}}/$BTRFS_MOUNTS/' /mnt/btrfs-current/etc/fstab
+
 arch-chroot /mnt/btrfs-current <<EOF
  
 cp /etc/pacman.d/mirrorlist{,.backup}
@@ -61,7 +70,7 @@ pacman -Syy
 pacman -S --noconfirm sudo
 sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
-grep -v '^#' packagesList | sudo pacman -S --noconfirm -
+grep -v '^#' /tmp/packagesList | sudo pacman -S --noconfirm -
 
 mkinitcpio -p linux
 
@@ -71,7 +80,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 useradd -m -G wheel -s /bin/bash $USERNAME
 
-chfn $USERNAME --full-name $FULL_NAME
+chfn --full-name $FULL_NAME $USERNAME
 
 echo -e "pass\npass" | passwd majcn
 

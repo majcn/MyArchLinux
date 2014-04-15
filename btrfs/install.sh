@@ -89,7 +89,7 @@ chfn --full-name "$FULL_NAME" $USERNAME
 
 echo -e "pass\npass" | passwd majcn
 
-source /custom.sh
+source /custom.sh $USERNAME
 
 exit
 

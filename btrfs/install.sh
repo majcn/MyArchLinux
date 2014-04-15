@@ -1,16 +1,16 @@
-HOSTNAME=majcn-laptop
-USERNAME=majcn
-FULL_NAME=Gregor Majcen
+HOSTNAME="majcn-laptop"
+USERNAME="majcn"
+FULL_NAME="Gregor Majcen"
 
-ZONEINFO=Europe/Ljubljana
+ZONEINFO="Europe/Ljubljana"
 
-GRUB_DEVICE=/dev/sda
+GRUB_DEVICE="/dev/sda"
 
-BTRFS_DEVICE=/dev/sda1
-BTRFS_LABEL=ArchSSD
-BTRFS_MOUNTS=rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,inode_cache
+BTRFS_DEVICE="/dev/sda1"
+BTRFS_LABEL="ArchSSD"
+BTRFS_MOUNTS="rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,inode_cache"
 
-mkfs.btrf -L "$BTRFS_LABEL" $BTRFS_DEVICE -f
+mkfs.btrf -L $BTRFS_LABEL $BTRFS_DEVICE -f
 BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o export | grep ^UUID= | cut -c6-`
 
 mkdir /mnt/btrfs-root
@@ -33,6 +33,7 @@ mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__current/opt /dev/sda1 /mnt/btrfs-cu
 mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var /dev/sda1 /mnt/btrfs-current/var
 mkdir -p /mnt/btrfs-current/var/lib
 mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
+
 pacstrap -i /mnt base base-devel btrfs-progs
 genfstab -U -p /mnt >> /mnt/etc/fstab
 arch-chroot /mnt <<EOF

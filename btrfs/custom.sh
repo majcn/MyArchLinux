@@ -1,4 +1,4 @@
 systemctl enable gdm.service
 
-gpasswd -a $USERNAME bumblebee
+gpasswd --add $USERNAME bumblebee
 systemctl enable bumblebeed.service

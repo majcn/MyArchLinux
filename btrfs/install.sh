@@ -10,7 +10,7 @@ BTRFS_DEVICE="/dev/sda1"
 BTRFS_LABEL="ArchSSD"
 BTRFS_MOUNTS="rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,inode_cache"
 
-mkfs.btrf -L $BTRFS_LABEL $BTRFS_DEVICE -f
+mkfs.btrfs -L $BTRFS_LABEL $BTRFS_DEVICE -f
 BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o export | grep ^UUID= | cut -c6-`
 
 mkdir /mnt/btrfs-root

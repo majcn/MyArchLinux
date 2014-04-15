@@ -34,7 +34,7 @@ mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var /dev/sda1 /mnt/b
 mkdir -p /mnt/btrfs-current/var/lib
 mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 
-pacstrap -i /mnt/btrfs-current base base-devel btrfs-progs
+pacstrap /mnt/btrfs-current base base-devel btrfs-progs
 genfstab -U -p /mnt/btrfs-current >> /mnt/btrfs-current/etc/fstab
 arch-chroot /mnt/btrfs-current <<EOF
  

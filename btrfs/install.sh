@@ -38,7 +38,7 @@ mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 
 pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo grub
 
-cp $DIR/packagesList /mnt/btrfs-current/tmp
+cp $DIR/packagesList /mnt/btrfs-current/packagesList
 cp $DIR/fstab /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_DEVICE}}|$BTRFS_DEVICE|" /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-current/etc/fstab
@@ -68,7 +68,8 @@ echo $HOSTNAME > /etc/hostname
 
 sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
 
-grep -v "^#" /tmp/packagesList | sudo pacman -Sy --noconfirm -
+grep -v "^#" /packagesList | sudo pacman -Sy --noconfirm -
+rm /packagesList
 
 mkinitcpio -p linux
 

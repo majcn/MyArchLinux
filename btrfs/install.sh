@@ -12,7 +12,7 @@ BTRFS_DEVICE="/dev/sda1"
 BTRFS_LABEL="ArchSSD"
 BTRFS_MOUNTS="rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,inode_cache"
 
-mkfs.btrfs -L $BTRFS_LABEL $BTRFS_DEVICE -f
+mkfs.btrfs -L "$BTRFS_LABEL" $BTRFS_DEVICE -f
 BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o export | grep ^UUID= | cut -c6-`
 
 mkdir /mnt/btrfs-root
@@ -36,14 +36,14 @@ mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var /dev/sda1 /mnt/b
 mkdir -p /mnt/btrfs-current/var/lib
 mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 
-pacstrap /mnt/btrfs-current base base-devel btrfs-progs
+pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo grub
 
 cp $DIR/packagesList /mnt/btrfs-current/tmp
 cp $DIR/fstab /mnt/btrfs-current/etc/fstab
-sed -i "s/{{BTRFS_DEVICE}}/$BTRFS_DEVICE/" /mnt/btrfs-current/etc/fstab
-sed -i "s/{{BTRFS_LABEL}}/$BTRFS_LABEL/" /mnt/btrfs-current/etc/fstab
-sed -i "s/{{BTRFS_DEVICE_UUID}}/$BTRFS_DEVICE_UUID/" /mnt/btrfs-current/etc/fstab
-sed -i "s/{{BTRFS_MOUNTS}}/$BTRFS_MOUNTS/" /mnt/btrfs-current/etc/fstab
+sed -i "s|{{BTRFS_DEVICE}}|$BTRFS_DEVICE|" /mnt/btrfs-current/etc/fstab
+sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-current/etc/fstab
+sed -i "s|{{BTRFS_DEVICE_UUID}}|$BTRFS_DEVICE_UUID|" /mnt/btrfs-current/etc/fstab
+sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-current/etc/fstab
 
 arch-chroot /mnt/btrfs-current <<EOF
  
@@ -66,15 +66,12 @@ hwclock --systohc --utc
 
 echo $HOSTNAME > /etc/hostname
 
-pacman -Syy
-pacman -S --noconfirm sudo
 sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
 
-grep -v "^#" /tmp/packagesList | sudo pacman -S --noconfirm -
+grep -v "^#" /tmp/packagesList | sudo pacman -Sy --noconfirm -
 
 mkinitcpio -p linux
 
-pacman -S --noconfirm grub os-prober
 grub-install --recheck $GRUB_DEVICE
 grub-mkconfig -o /boot/grub/grub.cfg
 

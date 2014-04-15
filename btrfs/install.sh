@@ -49,7 +49,8 @@ sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-current/etc/fstab
 # cp $DIR/grub.cfg /mnt/btrfs-current/boot/grub/grub.cfg
 # chmod 600 /mnt/btrfs-current/boot/grub/grub.cfg
 
-cp $DIR/packagesList /mnt/btrfs-current/packagesList
+cp $DIR/packages.install /mnt/btrfs-current/packages.install
+cp $DIR/custom.sh /mnt/btrfs-current/custom.sh
 
 arch-chroot /mnt/btrfs-current <<EOF
  
@@ -74,7 +75,7 @@ hwclock --systohc --utc
 
 echo $HOSTNAME > /etc/hostname
 
-grep -v "^#" /packagesList | pacman -Sy --noconfirm -
+grep -v "^#" /packages.install | pacman -Sy --noconfirm -
 
 sed -i "/^HOOKS=/s/fsck/btrfs/" /etc/mkinitcpio.conf
 mkinitcpio -p linux
@@ -88,11 +89,16 @@ chfn --full-name "$FULL_NAME" $USERNAME
 
 echo -e "pass\npass" | passwd majcn
 
+source /custom.sh
+
 exit
 
 EOF
 
-rm /mnt/btrfs-current/packagesList
+rm /mnt/btrfs-current/packages.install
+rm /mnt/btrfs-current/custom.sh
+
+sync
 
 umount /mnt/btrfs-current/home
 umount /mnt/btrfs-current/opt

@@ -95,8 +95,8 @@ exit
 
 EOF
 
-mkdir -p /mnt/btrfs-current/$USERNAME/Pictures
-cp -r $DIR/Wallpapers /mnt/btrfs-current/$USERNAME/Pictures/Wallpapers
+mkdir -p /mnt/btrfs-current/home/$USERNAME/Pictures
+cp -r $DIR/Wallpapers /mnt/btrfs-current/home/$USERNAME/Pictures/Wallpapers
 
 rm /mnt/btrfs-current/packages.install
 rm -r /mnt/btrfs-current/CustomScripts

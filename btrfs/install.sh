@@ -49,8 +49,8 @@ sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-current/etc/fstab
 # cp $DIR/grub.cfg /mnt/btrfs-current/boot/grub/grub.cfg
 # chmod 600 /mnt/btrfs-current/boot/grub/grub.cfg
 
-cp $DIR/packages.install /mnt/btrfs-current/packages.install
-cp $DIR/custom.sh /mnt/btrfs-current/custom.sh
+cp $DIR/ConfigFiles/packages.install /mnt/btrfs-current/packages.install
+cp -r $DIR/customScripts /mnt/btrfs-current/customScripts
 
 arch-chroot /mnt/btrfs-current <<EOF
  
@@ -89,14 +89,14 @@ chfn --full-name "$FULL_NAME" $USERNAME
 
 echo -e "pass\npass" | passwd majcn
 
-source /custom.sh $USERNAME
+find /customScripts -executable -type f -exec sh '{}' $USERNAME \;
 
 exit
 
 EOF
 
 rm /mnt/btrfs-current/packages.install
-rm /mnt/btrfs-current/custom.sh
+rm -r /mnt/btrfs-current/customScripts
 
 sync
 

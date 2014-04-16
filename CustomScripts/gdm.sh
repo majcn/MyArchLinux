@@ -1,1 +1,0 @@
-systemctl enable gdm.service

@@ -38,7 +38,7 @@ mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 
 pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo grub os-prober
 
-cp $DIR/fstab /mnt/btrfs-current/etc/fstab
+cp $DIR/ConfigFiles/fstab /mnt/btrfs-current/etc/fstab
 chmod 644 /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_DEVICE}}|$BTRFS_DEVICE|" /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-current/etc/fstab

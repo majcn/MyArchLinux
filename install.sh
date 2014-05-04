@@ -19,36 +19,36 @@ mkdir /mnt/btrfs-root
 mount -o $BTRFS_MOUNTS $BTRFS_DEVICE /mnt/btrfs-root
 
 mkdir -p /mnt/btrfs-root/__snapshot
-mkdir -p /mnt/btrfs-root/__current
-btrfs subvolume create /mnt/btrfs-root/__current/ROOT
-btrfs subvolume create /mnt/btrfs-root/__current/home
-btrfs subvolume create /mnt/btrfs-root/__current/opt
-btrfs subvolume create /mnt/btrfs-root/__current/var
+mkdir -p /mnt/btrfs-root/__active
+btrfs subvolume create /mnt/btrfs-root/__active/ROOT
+btrfs subvolume create /mnt/btrfs-root/__active/home
+btrfs subvolume create /mnt/btrfs-root/__active/opt
+btrfs subvolume create /mnt/btrfs-root/__active/var
 
-mkdir -p /mnt/btrfs-current
-mount -o $BTRFS_MOUNTS,subvol=__current/ROOT $BTRFS_DEVICE /mnt/btrfs-current
-mkdir -p /mnt/btrfs-current/home
-mkdir -p /mnt/btrfs-current/opt
-mkdir -p /mnt/btrfs-current/var/lib
-mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__current/home $BTRFS_DEVICE /mnt/btrfs-current/home
-mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__current/opt $BTRFS_DEVICE /mnt/btrfs-current/opt
-mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var $BTRFS_DEVICE /mnt/btrfs-current/var
-mkdir -p /mnt/btrfs-current/var/lib
-mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
+mkdir -p /mnt/btrfs-active
+mount -o $BTRFS_MOUNTS,subvol=__active/ROOT $BTRFS_DEVICE /mnt/btrfs-active
+mkdir -p /mnt/btrfs-active/home
+mkdir -p /mnt/btrfs-active/opt
+mkdir -p /mnt/btrfs-active/var/lib
+mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__active/home $BTRFS_DEVICE /mnt/btrfs-active/home
+mount -o $BTRFS_MOUNTS,nodev,nosuid,subvol=__active/opt $BTRFS_DEVICE /mnt/btrfs-active/opt
+mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__active/var $BTRFS_DEVICE /mnt/btrfs-active/var
+mkdir -p /mnt/btrfs-active/var/lib
+mount --bind /mnt/btrfs-root/__active/ROOT/var/lib /mnt/btrfs-active/var/lib
 
-pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo
+pacstrap /mnt/btrfs-active base base-devel btrfs-progs sudo
 
-cp $DIR/ConfigFiles/fstab /mnt/btrfs-current/etc/fstab
-chmod 644 /mnt/btrfs-current/etc/fstab
-sed -i "s|{{BTRFS_DEVICE}}|$BTRFS_DEVICE|" /mnt/btrfs-current/etc/fstab
-sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-current/etc/fstab
-sed -i "s|{{BTRFS_DEVICE_UUID}}|$BTRFS_DEVICE_UUID|" /mnt/btrfs-current/etc/fstab
-sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-current/etc/fstab
+cp $DIR/ConfigFiles/fstab /mnt/btrfs-active/etc/fstab
+chmod 644 /mnt/btrfs-active/etc/fstab
+sed -i "s|{{BTRFS_DEVICE}}|$BTRFS_DEVICE|" /mnt/btrfs-active/etc/fstab
+sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-active/etc/fstab
+sed -i "s|{{BTRFS_DEVICE_UUID}}|$BTRFS_DEVICE_UUID|" /mnt/btrfs-active/etc/fstab
+sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-active/etc/fstab
 
-cp $DIR/ConfigFiles/packages.install /mnt/btrfs-current/packages.install
-cp -r $DIR/CustomScripts /mnt/btrfs-current/CustomScripts
+cp $DIR/ConfigFiles/packages.install /mnt/btrfs-active/packages.install
+cp -r $DIR/CustomScripts /mnt/btrfs-active/CustomScripts
 
-arch-chroot /mnt/btrfs-current <<EOF
+arch-chroot /mnt/btrfs-active <<EOF
 
 cp /etc/pacman.d/mirrorlist{,.backup}
 rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
@@ -88,22 +88,22 @@ exit
 
 EOF
 
-mkdir -p /mnt/btrfs-current/home/$USERNAME/Pictures
-cp -r $DIR/Wallpapers /mnt/btrfs-current/home/$USERNAME/Pictures/Wallpapers
+mkdir -p /mnt/btrfs-active/home/$USERNAME/Pictures
+cp -r $DIR/Wallpapers /mnt/btrfs-active/home/$USERNAME/Pictures/Wallpapers
 
-rm /mnt/btrfs-current/packages.install
-rm -r /mnt/btrfs-current/CustomScripts
+rm /mnt/btrfs-active/packages.install
+rm -r /mnt/btrfs-active/CustomScripts
 
 sync
 
-umount /mnt/btrfs-current/home
-umount /mnt/btrfs-current/opt
-umount /mnt/btrfs-current/var/lib
-umount /mnt/btrfs-current/var
-umount /mnt/btrfs-current
+umount /mnt/btrfs-active/home
+umount /mnt/btrfs-active/opt
+umount /mnt/btrfs-active/var/lib
+umount /mnt/btrfs-active/var
+umount /mnt/btrfs-active
 umount /mnt/btrfs-root
 
 # mount -t efivarfs efivarfs /sys/firmware/efi/efivars              # ignore if already mounted
-# efibootmgr -d /dev/sdX -p Y -c -L "Arch Linux" -l /EFI/Linux/vmlinuz-arch_current.efi -u "root=UUID=$BTRFS_DEVICE_UUID rw add_efi_memmap rootfstype=btrfs rootflags=subvol=__current/ROOT initrd=/EFI/Linux/initramfs-arch_current.img"
+# efibootmgr -d /dev/sdX -p Y -c -L "Arch Linux" -l /EFI/Linux/vmlinuz-arch.efi -u "root=UUID=$BTRFS_DEVICE_UUID rw add_efi_memmap rootfstype=btrfs rootflags=subvol=__active/ROOT initrd=/EFI/Linux/initramfs-arch.img"
 
 echo "When you are ready, type 'reboot' and eject your installation media"

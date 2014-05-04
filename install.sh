@@ -36,7 +36,7 @@ mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__current/var $BTRFS_DEVICE /m
 mkdir -p /mnt/btrfs-current/var/lib
 mount --bind /mnt/btrfs-root/__current/ROOT/var/lib /mnt/btrfs-current/var/lib
 
-pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo grub os-prober
+pacstrap /mnt/btrfs-current base base-devel btrfs-progs sudo
 
 cp $DIR/ConfigFiles/fstab /mnt/btrfs-current/etc/fstab
 chmod 644 /mnt/btrfs-current/etc/fstab
@@ -45,15 +45,11 @@ sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_DEVICE_UUID}}|$BTRFS_DEVICE_UUID|" /mnt/btrfs-current/etc/fstab
 sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-current/etc/fstab
 
-# TODO: include grub file instead of generating one
-# cp $DIR/grub.cfg /mnt/btrfs-current/boot/grub/grub.cfg
-# chmod 600 /mnt/btrfs-current/boot/grub/grub.cfg
-
 cp $DIR/ConfigFiles/packages.install /mnt/btrfs-current/packages.install
 cp -r $DIR/CustomScripts /mnt/btrfs-current/CustomScripts
 
 arch-chroot /mnt/btrfs-current <<EOF
- 
+
 cp /etc/pacman.d/mirrorlist{,.backup}
 rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 
@@ -79,9 +75,6 @@ grep -v "^#" /packages.install | pacman -Sy --noconfirm -
 
 sed -i 's/^\(HOOKS=.*fsck\)\(.*$\)/\1 btrfs\2/g' /etc/mkinitcpio.conf
 mkinitcpio -p linux
-
-grub-install --recheck $GRUB_DEVICE
-grub-mkconfig -o /boot/grub/grub.cfg
 
 useradd -m -G wheel -s /bin/bash $USERNAME
 
@@ -109,5 +102,8 @@ umount /mnt/btrfs-current/var/lib
 umount /mnt/btrfs-current/var
 umount /mnt/btrfs-current
 umount /mnt/btrfs-root
+
+# mount -t efivarfs efivarfs /sys/firmware/efi/efivars              # ignore if already mounted
+# efibootmgr -d /dev/sdX -p Y -c -L "Arch Linux" -l /EFI/Linux/vmlinuz-arch_current.efi -u "root=UUID=$BTRFS_DEVICE_UUID rw add_efi_memmap rootfstype=btrfs rootflags=subvol=__current/ROOT initrd=/EFI/Linux/initramfs-arch_current.img"
 
 echo "When you are ready, type 'reboot' and eject your installation media"

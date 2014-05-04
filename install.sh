@@ -77,7 +77,7 @@ echo $HOSTNAME > /etc/hostname
 
 grep -v "^#" /packages.install | pacman -Sy --noconfirm -
 
-sed -i "/^HOOKS=/s/fsck/btrfs/" /etc/mkinitcpio.conf
+sed -i 's/^\(HOOKS=.*fsck\)\(.*$\)/\1 btrfs\2/g' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 grub-install --recheck $GRUB_DEVICE

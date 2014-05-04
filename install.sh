@@ -13,7 +13,7 @@ BTRFS_LABEL="Arch Linux"
 BTRFS_MOUNTS="rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,inode_cache"
 
 mkfs.btrfs -L "$BTRFS_LABEL" $BTRFS_DEVICE -f
-BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o export | grep ^UUID= | cut -c6-`
+BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o value -s UUID`
 
 mkdir /mnt/btrfs-root
 mount -o $BTRFS_MOUNTS $BTRFS_DEVICE /mnt/btrfs-root

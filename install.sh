@@ -9,7 +9,7 @@ ZONEINFO="Europe/Ljubljana"
 GRUB_DEVICE="/dev/sda"
 
 BTRFS_DEVICE="/dev/sda1"
-BTRFS_LABEL="ArchSSD"
+BTRFS_LABEL="Arch Linux"
 BTRFS_MOUNTS="rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,inode_cache"
 
 mkfs.btrfs -L "$BTRFS_LABEL" $BTRFS_DEVICE -f

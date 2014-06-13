@@ -6,14 +6,16 @@ FULL_NAME="Gregor Majcen"
 
 ZONEINFO="Europe/Ljubljana"
 
-GRUB_DEVICE="/dev/sda"
+EFI_DEVICE="/dev/sda1"
+EFI_MOUNTS="rw,noatime,discard,nodev,nosuid,noexec"
 
-BTRFS_DEVICE="/dev/sda1"
+BTRFS_DEVICE="/dev/sda2"
 BTRFS_LABEL="Arch Linux"
 BTRFS_MOUNTS="rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,inode_cache"
 
 mkfs.btrfs -L "$BTRFS_LABEL" $BTRFS_DEVICE -f
 BTRFS_DEVICE_UUID=`blkid $BTRFS_DEVICE -o value -s UUID`
+EFI_DEVICE_UUID=`blkid $EFI_DEVICE -o value -s UUID`
 
 mkdir /mnt/btrfs-root
 mount -o $BTRFS_MOUNTS $BTRFS_DEVICE /mnt/btrfs-root
@@ -36,7 +38,10 @@ mount -o $BTRFS_MOUNTS,nodev,nosuid,noexec,subvol=__active/var $BTRFS_DEVICE /mn
 mkdir -p /mnt/btrfs-active/var/lib
 mount --bind /mnt/btrfs-root/__active/ROOT/var/lib /mnt/btrfs-active/var/lib
 
-pacstrap /mnt/btrfs-active base base-devel btrfs-progs sudo
+mkdir -p /mnt/btrfs-active/boot
+mount -o $EFI_MOUNTS $EFI_DEVICE /mnt/btrfs-active/boot
+
+pacstrap /mnt/btrfs-active base base-devel btrfs-progs sudo gummiboot
 
 cp $DIR/ConfigFiles/fstab /mnt/btrfs-active/etc/fstab
 chmod 644 /mnt/btrfs-active/etc/fstab
@@ -44,6 +49,8 @@ sed -i "s|{{BTRFS_DEVICE}}|$BTRFS_DEVICE|" /mnt/btrfs-active/etc/fstab
 sed -i "s|{{BTRFS_LABEL}}|$BTRFS_LABEL|" /mnt/btrfs-active/etc/fstab
 sed -i "s|{{BTRFS_DEVICE_UUID}}|$BTRFS_DEVICE_UUID|" /mnt/btrfs-active/etc/fstab
 sed -i "s|{{BTRFS_MOUNTS}}|$BTRFS_MOUNTS|" /mnt/btrfs-active/etc/fstab
+sed -i "s|{{EFI_DEVICE_UUID}}|$EFI_DEVICE_UUID|" /mnt/btrfs-active/etc/fstab
+sed -i "s|{{EFI_MOUNTS}}|$EFI_MOUNTS|" /mnt/btrfs-active/etc/fstab
 
 cp $DIR/ConfigFiles/packages.install /mnt/btrfs-active/packages.install
 cp -r $DIR/CustomScripts /mnt/btrfs-active/CustomScripts

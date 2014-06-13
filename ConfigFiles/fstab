@@ -5,6 +5,8 @@ UUID={{BTRFS_DEVICE_UUID}}    /opt               btrfs    {{BTRFS_MOUNTS}},nodev
 UUID={{BTRFS_DEVICE_UUID}}    /var               btrfs    {{BTRFS_MOUNTS}},nodev,nosuid,noexec,subvol=__active/var    0 0
 UUID={{BTRFS_DEVICE_UUID}}    /run/btrfs-root    btrfs    {{BTRFS_MOUNTS}},nodev,nosuid,noexec                        0 0
 
+UUID={{EFI_DEVICE_UUID}}    /boot    vfat    {{EFI_MOUNTS}}    0 2
+
 /run/btrfs-root/__active/ROOT/var/lib    /var/lib    none    bind    0 0
 
 tmpfs    /tmp        tmpfs    rw,nodev,nosuid           0 0

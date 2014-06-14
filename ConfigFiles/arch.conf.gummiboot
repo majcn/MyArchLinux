@@ -1,0 +1,4 @@
+title      Arch Linux
+linux      /vmlinuz-linux
+initrd     /initramfs-linux.img
+options    root=UUID={{BTRFS_DEVICE_UUID}} rw rootfstype=btrfs rootflags=subvol=__active/ROOT

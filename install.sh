@@ -83,6 +83,8 @@ grep -v "^#" /packages.install | pacman -Sy --noconfirm -
 sed -i 's/^\(HOOKS=.*fsck\)\(.*$\)/\1 btrfs\2/g' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
+gummiboot install
+
 useradd -m -G wheel -s /bin/bash $USERNAME
 
 chfn --full-name "$FULL_NAME" $USERNAME
@@ -97,20 +99,24 @@ EOF
 
 mkdir -p /mnt/btrfs-active/home/$USERNAME/Pictures
 cp -r $DIR/Wallpapers /mnt/btrfs-active/home/$USERNAME/Pictures/Wallpapers
+chown -R $USERNAME:$USERNAME /mnt/btrfs-active/home/$USERNAME/Pictures
+
+mkdir -p /mnt/btrfs-active/boot/loader/entries
+cp $DIR/ConfigFiles/arch.conf.gummiboot /mnt/btrfs-active/boot/loader/entries/arch.conf
+chmod 644 /mnt/btrfs-active/boot/loader/entries/arch.conf
+sed -i "s|{{BTRFS_DEVICE_UUID}}|$BTRFS_DEVICE_UUID|" /mnt/btrfs-active/boot/loader/entries/arch.conf
 
 rm /mnt/btrfs-active/packages.install
 rm -r /mnt/btrfs-active/CustomScripts
 
 sync
 
+umount /mnt/btrfs-active/boot
 umount /mnt/btrfs-active/home
 umount /mnt/btrfs-active/opt
 umount /mnt/btrfs-active/var/lib
 umount /mnt/btrfs-active/var
 umount /mnt/btrfs-active
 umount /mnt/btrfs-root
-
-# mount -t efivarfs efivarfs /sys/firmware/efi/efivars              # ignore if already mounted
-# efibootmgr -d /dev/sdX -p Y -c -L "Arch Linux" -l /EFI/Linux/vmlinuz-arch.efi -u "root=UUID=$BTRFS_DEVICE_UUID rw add_efi_memmap rootfstype=btrfs rootflags=subvol=__active/ROOT initrd=/EFI/Linux/initramfs-arch.img"
 
 echo "When you are ready, type 'reboot' and eject your installation media"

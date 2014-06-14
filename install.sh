@@ -97,6 +97,7 @@ exit
 
 EOF
 
+useradd -m -s /bin/bash $USERNAME
 mkdir -p /mnt/btrfs-active/home/$USERNAME/Pictures
 cp -r $DIR/Wallpapers /mnt/btrfs-active/home/$USERNAME/Pictures/Wallpapers
 chown -R $USERNAME:$USERNAME /mnt/btrfs-active/home/$USERNAME/Pictures
